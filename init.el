@@ -53,15 +53,19 @@
   (set-frame-font "Inconsolata-24" nil t)
   (when (eq system-type 'darwin)
     (setq ns-command-modifier (quote meta)))
-
+  (defun other-window-or-split ()
+    (interactive)
+    (when (one-window-p)
+      (split-window-horizontally))
+    (other-window 1))
   :bind '(
           ("C-h" . delete-backward-char)
-          ("M-ESC ESC" . c/redraw-frame))
+          ("M-ESC ESC" . c/redraw-frame)
+          ("C-t" . other-window-or-split))
   :custom '(
             ;; (user-full-name . "")
             ;; (user-mail-address . "")
             ;; (user-login-name . "")
-            (create-lockfiles . nil)
             (debug-on-error . t)
             (init-file-debug . t)
             (frame-resize-pixelwise . t)
@@ -76,19 +80,18 @@
             (truncate-lines . t)
             ;; (use-dialog-box . nil)
             ;; (use-file-dialog . nil)
-            ;; (menu-bar-mode . t)
-            ;; (tool-bar-mode . nil)
+            (menu-bar-mode . t)
+            (tool-bar-mode . nil)
             (scroll-bar-mode . nil)
             (inhibit-startup-screen . t)
             (indent-tabs-mode . nil)
-            (auto-save-default . nil))
+            (auto-save-default . nil)
+            (make-backup-files . nil)
+            (create-lockfiles . nil))
   :config
   (defalias 'yes-or-no-p 'y-or-n-p)
-
-  :global-minor-mode global-auto-revert-mode
+  :global-minor-mode global-auto-revert-mode global-linum-mode global-visual-line-mode
 )
-
-
 
 (leaf modus-themes
   :ensure t
@@ -110,7 +113,9 @@
 
 (leaf magit
   :ensure t
-)
+  :bind '(
+          ("C-c s" . magit-status)))
+
 (leaf yaml-mode
   :ensure t
 )
@@ -147,6 +152,14 @@
   :hook emacs-lisp-mode-hook
 )
 
-(provide 'init)
+(leaf open-junk-file
+  :ensure t
+  :custom
+  (open-junk-file-format . "~/.emacs.d/junk/%Y/%m/%Y-%m-%d-%H%M%S."))
 
+;; (leaf adaptive-wrap
+;;   :ensure t)
+
+
+(provide 'init)
 ;;; init.el ends here
